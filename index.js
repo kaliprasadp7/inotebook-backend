@@ -1,10 +1,10 @@
-const connectToMongo = require('./db')
-const express = require('express')
+const connectToMongo = require('./db');
+const express = require('express');
 connectToMongo();
-const app = express()
+const app = express();
+app.use(express.json())
 const port = 3001
 
-app.use(express.json())
 
 // Available routes
 // app.get('/', (req, res) => {
