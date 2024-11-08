@@ -1,7 +1,10 @@
 const connectToMongo = require('./db');
 const express = require('express');
+const cors = require('cors')
 connectToMongo();
 const app = express();
+// cors is used to fetch api data in the fronted. without cors you can't hit the url endpoint using function
+app.use(cors())
 app.use(express.json())
 const port = 3001
 
