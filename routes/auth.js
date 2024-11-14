@@ -58,22 +58,23 @@ router.post('/login', [
     body('email', 'Enter a valid Email').isEmail(),
     body('password', 'Password cannot be empty').exists()
 ], async (req, res) => {
+    let success = false;
     // If there are errors return bad request and the errors
     const result = validationResult(req);
     if (!result.isEmpty()) {
-        return res.status(400).json({ errors: result.array() });
+        return res.status(400).json({ success, errors: result.array() });
     }
 
     const {email, password} = req.body;
     try {
         let user = await User.findOne({email});
         if(!user){
-            return res.status(400).json({error : "Please login with correct credentials"});
+            return res.status(400).json({success, error : "Please login with correct credentials"});
         }
 
         const passwordcompare = await bcrypt.compare(password, user.password);
         if(!passwordcompare){
-            return res.status(400).json({error : "Please login with correct credentials"});
+            return res.status(400).json({success, error : "Please login with correct credentials"});
         }
 
         const data = {
@@ -81,11 +82,12 @@ router.post('/login', [
                 id:user.id
             }
         }
+        success = true;
         const authtoken = jwt.sign(data, JWT_SECRET);
-        res.send({authtoken});
+        res.send({success, authtoken});
     } catch (error) {
         console.log(error.message);
-        res.status(500).send("Internal server error");
+        res.status(500).send({success, error: "Internal server error"});
     }
 })
 
